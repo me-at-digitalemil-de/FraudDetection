@@ -1,0 +1,3 @@
+docker build --no-cache -t jhollingerdcos/dcosappstudio-elasticingester-backend-fraud-v$1 .
+docker push jhollingerdcos/dcosappstudio-elasticingester-backend-fraud-v$1
+
