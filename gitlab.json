@@ -9,7 +9,7 @@
     [
       "hostname",
       "CLUSTER",
-      "10.0.0.130"
+      "10.0.3.201"
     ]
   ],
   "container": {
@@ -75,7 +75,7 @@
   "cpus": 1,
   "disk": 0,
   "env": {
-    "GITLAB_OMNIBUS_CONFIG": "external_url 'http://gitlab.thegym.mesosphere.io/'; registry_external_url 'http://gitlab.thegym.mesosphere.io:50000/'; gitlab_rails['gitlab_ssh_host'] = 'gitlab.thegym.mesosphere.io:22222';  unicorn['worker_processes'] = 2; manage_accounts['enable'] = true; user['home'] = '/gitlab-data/home'; git_data_dir '/gitlab-data/git-data'; gitlab_rails['shared_path'] = '/gitlab-data/shared'; gitlab_rails['uploads_directory'] = '/gitlab-data/uploads'; gitlab_ci['builds_directory'] = '/gitlab-data/builds';"
+    "GITLAB_OMNIBUS_CONFIG": "external_url 'http://gitlab.frauddetection.mesosphere.io/'; registry_external_url 'http://gitlab.frauddetection.mesosphere.io:50000/'; gitlab_rails['gitlab_ssh_host'] = 'gitlab.frauddetection.mesosphere.io:22222';  unicorn['worker_processes'] = 2; manage_accounts['enable'] = true; user['home'] = '/gitlab-data/home'; git_data_dir '/gitlab-data/git-data'; gitlab_rails['shared_path'] = '/gitlab-data/shared'; gitlab_rails['uploads_directory'] = '/gitlab-data/uploads'; gitlab_ci['builds_directory'] = '/gitlab-data/builds';"
   },
   "healthChecks": [
     {
@@ -102,7 +102,7 @@
     "DCOS_PACKAGE_VERSION": "1.0-9.1.0",
     "DCOS_PACKAGE_NAME": "gitlab",
     "MARATHON_SINGLE_INSTANCE_APP": "true",
-    "HAPROXY_0_VHOST": "gitlab.thegym.mesosphere.io"
+    "HAPROXY_0_VHOST": "gitlab.frauddetection.mesosphere.io"
   },
   "maxLaunchDelaySeconds": 3600,
   "mem": 2048,

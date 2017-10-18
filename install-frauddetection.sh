@@ -2,16 +2,12 @@
 
 export CLUSTER_URL=$(dcos config show core.dcos_url)
 read -p "Install services? (y/n) " -n1 -s c
-if [ "$c" = "y" ]; then
-	echo yes
-	dcos package install --yes marathon-lb --package-version=1.10.0
-        dcos package install --yes cassandra --package-version=1.0.25-3.0.10
-        dcos package install --yes kafka --package-version=1.1.19.1-0.10.1.0
-        dcos package install --yes beta-elastic --package-version=1.0.13-5.4.1-beta --options=elastic_config.json
-        dcos package install --options=kibana_config.json --yes beta-kibana --package-version=1.0.13-5.4.1-beta
-else
-	echo no
-fi
+dcos package install --yes --cli dcos-enterprise-cli
+dcos package install --yes marathon-lb --package-version=1.10.0
+dcos package install --yes cassandra --package-version=1.0.25-3.0.10
+dcos package install --yes kafka --package-version=1.1.19.1-0.10.1.0
+dcos package install --yes beta-elastic --package-version=1.0.13-5.4.1-beta --options=elastic_config.json
+dcos package install --options=kibana_config.json --yes beta-kibana --package-version=1.0.13-5.4.1-beta
 echo
 if  [[ $1 == http* ]] 
 then
@@ -33,6 +29,15 @@ fi
 cp frauddetection-config.jsontemplate config.tmp
 sed -ie "s@PUBLIC_IP_TOKEN@$PUBLICNODEIP@g;"  config.tmp
 sed -ie "s@CLUSTER_URL_TOKEN@$CLUSTER_URL@g;"  config.tmp
+
+cp versions/ui-config.json ui-config.tmp
+sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  ui-config.tmp
+sed -ie "s@CLUSTER_URL_TOKEN@$DCOS_URL@g;"  ui-config.tmp
+
+cp versions/elastic-config.json elastic-config.tmp
+sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  elastic-config.tmp
+
+
 
 seconds=0
 OUTPUT=0
