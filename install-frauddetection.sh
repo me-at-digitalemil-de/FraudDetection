@@ -1,7 +1,6 @@
 #!/bin/bash
 
 export CLUSTER_URL=$(dcos config show core.dcos_url)
-read -p "Install services? (y/n) " -n1 -s c
 dcos package install --yes --cli dcos-enterprise-cli
 dcos package install --yes marathon-lb --package-version=1.10.0
 dcos package install --yes cassandra --package-version=1.0.25-3.0.10
