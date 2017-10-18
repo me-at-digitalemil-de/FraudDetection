@@ -13,6 +13,10 @@ def gitCommit() {
 dir ('UI') { 
         // Build Docker image
         stage 'Build'
+        sh "cp versions/ui-config.json ui-config.tmp"
+        sh 'sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  ui-config.tmp'
+        sh 'sed -ie "s@CLUSTER_URL_TOKEN@$DCOS_URL@g;"" ui-config.tmp'
+
         sh "docker build -t ${env.DOCKERHUB_REPO}:frauddetection-ui-v1.0.0 ."
 
         // Log in and push image to GitLab
@@ -33,6 +37,9 @@ dir ('UI') {
 dir ('WorkerElasticApp') { 
         // Build Docker image
         stage 'Build'
+        sh 'cp versions/elastic-config.json elastic-config.tmp'
+        sh 'sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  elastic-config.tmp'
+
         sh "docker build -t ${env.DOCKERHUB_REPO}:frauddetection-elasticingester-v1.0.0 ."
 
         // Log in and push image to GitLab

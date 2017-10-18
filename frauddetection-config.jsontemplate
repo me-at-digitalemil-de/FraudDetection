@@ -28,7 +28,7 @@
 				"type": "DOCKER",
 				"volumes": [],
 				"docker": {
-					"image": "jhollingerdcos/dcosappstudio-elasticingester-backend-fraud-v3",
+					"image": "digitalemil/mypublicrepo:frauddetection-workerelasticingester-v1.0.0",
 					"network": "HOST",
 					"portMappings": [],
 					"privileged": false,
@@ -430,7 +430,7 @@
 				"type": "DOCKER",
 				"volumes": [],
 				"docker": {
-					"image": "jhollingerdcos/fraud_detection_ui_v1",
+					"image": "digitalemil/mypublicrepo:frauddetection-ui-v1.0.0",
 					"network": "HOST",
 					"portMappings": [],
 					"privileged": false,
