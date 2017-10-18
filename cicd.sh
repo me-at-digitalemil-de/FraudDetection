@@ -76,9 +76,13 @@ cd $dir
 git clone http://root@gitlab.$APPLOWERCASE.mesosphere.io/root/$APP.git
 cd $APP
 ./install-$APPLOWERCASE.sh 
+
 git add .
+
 git commit -m "first commit"
+
 git push origin master
+
 echo
 echo We are setting up Jenkins now. 
 read -p "Press button when ready." -n1 -s

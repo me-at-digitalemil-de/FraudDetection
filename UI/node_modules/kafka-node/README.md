@@ -34,6 +34,8 @@ Kafka-node is a Node.js client with Zookeeper integration for Apache Kafka 0.8.1
   - [HighLevelConsumer does not consume on all partitions](#highlevelconsumer-does-not-consume-on-all-partitions)
   - [How to throttle messages / control the concurrency of processing messages](#how-to-throttle-messages--control-the-concurrency-of-processing-messages)
   - [How do I produce and consume binary data?](#how-do-i-produce-and-consume-binary-data)
+  - [What are these node-gyp and snappy errors?](#what-are-these-node-gyp-and-snappy-errors)
+  - [How do I configure the log output?](#how-do-i-configure-the-log-output)
 - [Running Tests](#running-tests)
 - [LICENSE - "MIT"](#license---mit)
 
@@ -64,7 +66,7 @@ Closes the connection to Zookeeper and the brokers so that the node process can 
 * `cb`: **Function**, the callback
 
 ## Producer
-### Producer(client, [options])
+### Producer(client, [options], [customPartitioner])
 * `client`: client which keeps a connection with the Kafka server.
 * `options`: options for producer,
 
@@ -74,7 +76,7 @@ Closes the connection to Zookeeper and the brokers so that the node process can 
     requireAcks: 1,
     // The amount of time in milliseconds to wait for all acks before considered, default 100ms
     ackTimeoutMs: 100,
-    // Partitioner type (default = 0, random = 1, cyclic = 2, keyed = 3), default 0
+    // Partitioner type (default = 0, random = 1, cyclic = 2, keyed = 3, custom = 4), default 0
     partitionerType: 2
 }
 ```
@@ -160,7 +162,7 @@ producer.createTopics(['t'], function (err, data) {});// Simply omit 2nd arg
 
 
 ## HighLevelProducer
-### HighLevelProducer(client, [options])
+### HighLevelProducer(client, [options], [customPartitioner])
 * `client`: client which keeps a connection with the Kafka server. Round-robins produce requests to the available topic partitions
 * `options`: options for producer,
 
@@ -170,7 +172,7 @@ producer.createTopics(['t'], function (err, data) {});// Simply omit 2nd arg
     requireAcks: 1,
     // The amount of time in milliseconds to wait for all acks before considered, default 100ms
     ackTimeoutMs: 100,
-    // Partitioner type (default = 0, random = 1, cyclic = 2, keyed = 3), default 2
+    // Partitioner type (default = 0, random = 1, cyclic = 2, keyed = 3, custom = 4), default 2
     partitionerType: 3
 }
 ```
@@ -552,7 +554,7 @@ The new consumer group uses Kafka broker coordinators instead of Zookeeper to ma
 
 ### Coming from the highLevelConsumer
 
-API is very similar to `HighLevelConsumer` with some exceptions noted below:
+API is very similar to `HighLevelConsumer` since it extends directly from HLC so many of the same options will apply with some exceptions noted below:
 
 * In an effort to make the API simpler you no longer need to create a `client` this is done inside the `ConsumerGroup`
 * consumer ID do not need to be defined. There's a new ID to represent consumers called *member ID* and this is assigned to consumer after joining the group
@@ -862,8 +864,13 @@ export DEBUG=kafka-node:*
 Call `client.loadMetadataForTopics` with a blank topic array to get the entire list of available topics (and available brokers).
 
 ```js
-client.loadMetadataForTopics([], function (error, results) {
-  console.log('%j', _.get(results, '1.metadata'));
+client.once('connect', function () {
+	client.loadMetadataForTopics([], function (error, results) {
+	  if (error) {
+	  	return console.error(error);
+	  }
+	  console.log('%j', _.get(results, '1.metadata'));
+	});
 });
 ```
 
@@ -924,6 +931,51 @@ Set the `messages` attribute in the `payload` to a `Buffer`. `TypedArrays` such 
 ```
 
 Reference to issue [#470](https://github.com/SOHU-Co/kafka-node/issues/470) [#514](https://github.com/SOHU-Co/kafka-node/issues/514)
+
+## What are these node-gyp and snappy errors?
+
+Snappy is a optional compression library. Windows users have reported issues with installing it while running `npm install`. It's **optional** in kafka-node and can be skipped by using the `--no-optional` flag (though errors from it should not fail the install).
+
+```bash
+npm install kafka-node --no-optional --save
+```
+
+Keep in mind if you try to use snappy without installing it `kafka-node` will throw a runtime exception.
+
+## How do I configure the log output?
+
+By default, `kafka-node` uses [debug](https://github.com/visionmedia/debug) to log important information. To integrate `kafka-node`'s log output into an application, it is possible to set a logger provider. This enables filtering of log levels and easy redirection of output streams.
+
+### What is a logger provider?
+
+A logger provider is a function which takes the name of a logger and returns a logger implementation. For instance, the following code snippet shows how a logger provider for the global `console` object could be written:
+
+```javascript
+function consoleLoggerProvider (name) {
+  // do something with the name
+  return {
+    debug: console.debug.bind(console),
+    info: console.info.bind(console),
+    warn: console.warn.bind(console),
+    error: console.error.bind(console)
+  };
+}
+```
+
+The logger interface with its `debug`, `info`, `warn` and `error` methods expects format string support as seen in `debug` or the JavaScript `console` object. Many commonly used logging implementations cover this API, e.g. bunyan, pino or winston.
+
+### How do I set a logger provider?
+
+For performance reasons, initialization of the `kafka-node` module creates all necessary loggers. This means that custom logger providers need to be set *before requiring the `kafka-node` module*. The following example shows how this can be done:
+
+```javascript
+// first configure the logger provider
+const kafkaLogging = require('kafka-node/logging');
+kafkaLogging.setLoggerProvider(consoleLoggerProvider);
+
+// then require kafka-node and continue as normal
+const kafka = require('kafka-node');
+```
 
 # Running Tests
 

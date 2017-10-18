@@ -4,7 +4,7 @@ var zookeeper = require('node-zookeeper-client');
 var util = require('util');
 var async = require('async');
 var EventEmiter = require('events').EventEmitter;
-var debug = require('debug')('kafka-node:zookeeper');
+var logger = require('./logging')('kafka-node:zookeeper');
 
 /**
  * Provides kafka specific helpers for talking with zookeeper
@@ -32,7 +32,7 @@ util.inherits(Zookeeper, EventEmiter);
 Zookeeper.prototype.unregisterConsumer = function (groupId, consumerId, cb) {
   var path = '/consumers/' + groupId + '/ids/' + consumerId;
   var self = this;
-  debug('unregister consumer node: %s', path);
+  logger.debug('unregister consumer node: %s', path);
   async.waterfall([
     function (callback) {
       self.client.exists(path, callback);
@@ -41,7 +41,7 @@ Zookeeper.prototype.unregisterConsumer = function (groupId, consumerId, cb) {
       if (stat) {
         self.client.remove(path, function (error) {
           if (error) {
-            debug(error);
+            logger.error(error);
             return callback(error);
           }
           callback(null, true);
@@ -105,7 +105,7 @@ Zookeeper.prototype.registerConsumer = function (groupId, consumerId, payloads, 
         if (error) {
           callback(error);
         } else {
-          debug('Node: %s was created.', path + '/ids/' + consumerId);
+          logger.debug('Node: %s was created.', path + '/ids/' + consumerId);
           cb();
         }
       });
@@ -126,10 +126,9 @@ Zookeeper.prototype.getConsumersPerTopic = function (groupId, cb) {
     function (callback) {
       that.client.getChildren(consumersPath, function (error, children, stats) {
         if (error) {
-          callback(error);
-          return;
+          return callback(error);
         } else {
-          debug('Children are: %j.', children);
+          logger.debug('Children are: %j.', children);
           async.each(children, function (consumer, cbb) {
             var path = consumersPath + '/' + consumer;
             that.client.getData(
@@ -158,7 +157,7 @@ Zookeeper.prototype.getConsumersPerTopic = function (groupId, cb) {
 
                     cbb();
                   } catch (e) {
-                    debug(e);
+                    logger.error(e);
                     cbb(new Error('Unable to assemble data'));
                   }
                 }
@@ -209,7 +208,7 @@ Zookeeper.prototype.getConsumersPerTopic = function (groupId, cb) {
     }],
     function (err) {
       if (err) {
-        debug(err);
+        logger.debug(err);
         cb(err);
       } else cb(null, consumerPerTopicMap);
     });
@@ -231,7 +230,7 @@ Zookeeper.prototype.listPartitions = function (topic) {
     },
     function (error, children) {
       if (error) {
-        debug(error);
+        logger.error(error);
         // Ignore NO_NODE error here #157
         if (error.name !== 'NO_NODE') {
           self.emit('error', error);
@@ -256,7 +255,7 @@ Zookeeper.prototype.listBrokers = function (cb) {
     },
     function (error, children) {
       if (error) {
-        debug('Failed to list children of node: %s due to: %s.', path, error);
+        logger.debug('Failed to list children of node: %s due to: %s.', path, error);
         that.emit('error', error);
         return;
       }
@@ -318,7 +317,7 @@ Zookeeper.prototype.listConsumers = function (groupId) {
     },
     function (error, children) {
       if (error) {
-        debug(error);
+        logger.error(error);
         // Ignore NO_NODE error here #157
         if (error.name !== 'NO_NODE') {
           that.emit('error', error);
@@ -339,7 +338,7 @@ Zookeeper.prototype.topicExists = function (topic, cb, watch) {
   this.client.exists(
     path,
     function (event) {
-      debug('Got event: %s.', event);
+      logger.debug('Got event: %s.', event);
       if (watch) {
         self.topicExists(topic, cb);
       }
@@ -359,7 +358,7 @@ Zookeeper.prototype.deletePartitionOwnership = function (groupId, topic, partiti
       if (error) {
         cb(error);
       } else {
-        debug('Removed partition ownership %s', path);
+        logger.debug('Removed partition ownership %s', path);
         cb();
       }
     }
@@ -414,7 +413,7 @@ Zookeeper.prototype.addPartitionOwnership = function (consumerId, groupId, topic
         if (error) {
           callback(error);
         } else if (stat) {
-          debug('Gained ownership of %s by %s.', path, consumerId);
+          logger.debug('Gained ownership of %s by %s.', path, consumerId);
           callback();
         } else {
           callback("Path wasn't created");
