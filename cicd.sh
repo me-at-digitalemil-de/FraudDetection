@@ -76,13 +76,6 @@ cd $dir
 git clone http://root@gitlab.$APPLOWERCASE.mesosphere.io/root/$APP.git
 cd $APP
 ./install-$APPLOWERCASE.sh 
-
-git add .
-
-git commit -m "first commit"
-
-git push origin master
-
 echo
 echo We are setting up Jenkins now. 
 read -p "Press button when ready." -n1 -s
@@ -110,6 +103,6 @@ echo Now check Poll SCM and use "* * * * *" as schedule. Press Apply. Scroll dow
 read -p "Press button when ready." -n1 -s
 echo
 echo Next we need to define the repository. Please enter http://gitlab.marathon.l4lb.thisdcos.directory/root/$APP.git as Repository URL and select root/******** as credentials. Press Apply
-echo We are all set now. Thank you for your patience. You can now start build pipelines in Jenkins or call the upgrade.sh or downgrade.sh script in the folder where we cloned the repo.
+echo We are all set now. Thank you for your patience. You can now start build-pipelines by executing the upgrade.sh or downgrade.sh script in the folder where we cloned the repo into.
 echo Good luck!
 
