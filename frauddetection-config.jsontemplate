@@ -616,7 +616,7 @@
 					"VIP_0": "/dcosappstudio-kibanaproxy:0"
 				}
 			}],
-			"requirePorconnectedcaruits": false
+			"requirePorts": false
 		}]
 	}]
 }

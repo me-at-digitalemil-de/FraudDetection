@@ -74,6 +74,6 @@ curl -X PUT -k -H "Authorization: token=$(dcos config show core.dcos_acs_token)"
 curl -X PUT -k -H "Authorization: token=$(dcos config show core.dcos_acs_token)" -H "Content-Type: application/json" -d '{"description":"Give permission"}' $(dcos config show core.dcos_url)/acs/api/v1/acls/dcos:adminrouter:ops:mesos/groups/backend/full
 curl -X PUT -k -H "Authorization: token=$(dcos config show core.dcos_acs_token)" -H "Content-Type: application/json" -d '{"description":"Give permission"}' $(dcos config show core.dcos_url)/acs/api/v1/acls/dcos:adminrouter:ops:mesos/groups/edge/full
 
-curl -X PUT -k -H "Authorization: token=$(dcos config show core.dcos_acs_token)" -H "Content-Type: application/json" -d '{"description":"Create permission"}' $(dcos config show core.dcos_url)/acs/api/v1/acls/dcos:adminrouter:service:appstudio-ui-connectedcar
-curl -X PUT -k -H "Authorization: token=$(dcos config show core.dcos_acs_token)" -H "Content-Type: application/json" -d '{"description":"Give permission"}' $(dcos config show core.dcos_url)/acs/api/v1/acls/dcos:adminrouter:service:appstudio-ui-connectedcar/groups/frontend/full
+curl -X PUT -k -H "Authorization: token=$(dcos config show core.dcos_acs_token)" -H "Content-Type: application/json" -d '{"description":"Create permission"}' $(dcos config show core.dcos_url)/acs/api/v1/acls/dcos:adminrouter:service:appstudio-ui-frauddetection
+curl -X PUT -k -H "Authorization: token=$(dcos config show core.dcos_acs_token)" -H "Content-Type: application/json" -d '{"description":"Give permission"}' $(dcos config show core.dcos_url)/acs/api/v1/acls/dcos:adminrouter:service:appstudio-ui-frauddetection/groups/frontend/full
 
