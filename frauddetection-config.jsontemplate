@@ -416,7 +416,7 @@
 			},
 			"instances": 1,
 			"cpus": 0.1,
-			"mem": 128,
+			"mem": 512,
 			"disk": 0,
 			"gpus": 0,
 			"executor": "",

@@ -2,20 +2,29 @@
 
 export CLUSTER_URL=$(dcos config show core.dcos_url)
 dcos package install --yes --cli dcos-enterprise-cli
-dcos package install --yes marathon-lb --package-version=1.10.0
 dcos package install --yes cassandra --package-version=1.0.25-3.0.10
 dcos package install --yes kafka --package-version=1.1.19.1-0.10.1.0
 dcos package install --yes elastic --package-version=2.0.0-5.5.1 --options=elastic-config.json
 dcos package install --options=kibana-config.json --yes kibana --package-version=2.0.0-5.5.1
 
-echo
-if  [[ $1 == http* ]] 
-then
-	export PUBLICELBHOST=$(echo $1 | awk -F/ '{print $3}')
-else
-echo $1 | awk -F/ '{print $3}'
-	export PUBLICELBHOST=$(echo $1 | awk -F/ '{print $1}')
+EDGELB="$(dcos task edgelb | wc -l)"
+if [ "$EDGELB" -lt "3" ]; then
+	dcos package repo add --index=0 edgelb-aws https://edge-lb-infinity-artifacts.s3.amazonaws.com/autodelete7d/master/edgelb/stub-universe-edgelb.json
+	dcos package repo add --index=0 edgelb-pool-aws https://edge-lb-infinity-artifacts.s3.amazonaws.com/autodelete7d/master/edgelb-pool/stub-universe-edgelb-pool.json
+	dcos security org service-accounts keypair edgelb-private-key.pem edgelb-public-key.pem
+	dcos security org service-accounts create -p edgelb-public-key.pem -d "edgelb service account" edgelb-principal
+	dcos security org groups add_user superusers edgelb-principal
+	dcos security secrets create-sa-secret --strict edgelb-private-key.pem edgelb-principal edgelb-secret
+	rm -f edgelb-private-key.pem
+	rm -f edgelb-public-key.pem
+	dcos package install --options=edgelb-options.json edgelb --yes
+	dcos package install edgelb-pool --cli --yes
+	echo "Waiting for edge-lb to come up ..."
+	until dcos edgelb ping; do sleep 1; done
+	dcos edgelb config edge-lb-pool-direct.yaml
 fi
+echo
+
 echo Determing public node ip...
 export PUBLICNODEIP=$(./findpublic_ips.sh | head -1 | sed "s/.$//" )
 echo Public node ip: $PUBLICNODEIP 
@@ -31,13 +40,10 @@ sed -ie "s@PUBLIC_IP_TOKEN@$PUBLICNODEIP@g;"  config.tmp
 sed -ie "s@CLUSTER_URL_TOKEN@$CLUSTER_URL@g;"  config.tmp
 
 cp versions/ui-config.json ui-config.tmp
-sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  ui-config.tmp
 sed -ie "s@CLUSTER_URL_TOKEN@$DCOS_URL@g;"  ui-config.tmp
 sed -ie "s@PUBLIC_IP_TOKEN@$PUBLICNODEIP@g;"  ui-config.tmp
 
 cp versions/elastic-config.json elastic-config.tmp
-sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  elastic-config.tmp
-
 
 seconds=0
 OUTPUT=0
@@ -58,6 +64,7 @@ until $(curl --output /dev/null --silent --head --fail http://$PUBLICNODEIP:1000
     printf '.'
     sleep 5
 done
+dcos marathon app add fraud_actor.json
 ./permissions.sh frauddetection-config.jsontemplate
 open http://$PUBLICNODEIP:10001
 rm config.tmp
