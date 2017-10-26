@@ -9,15 +9,11 @@ def gitCommit() {
         // Checkout source code from Git
         stage 'Checkout'
         checkout scm
-      
-dir ('UI') { 
+
+        dir ('UIService') { 
         // Build Docker image
         stage 'Build'
-        sh "cp versions/ui-config.json ui-config.tmp"
-        sh 'sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  ui-config.tmp'
-        sh 'sed -ie "s@CLUSTER_URL_TOKEN@$DCOS_URL@g;"" ui-config.tmp'
-
-        sh "docker build -t ${env.DOCKERHUB_REPO}:frauddetection-ui-v1.0.0 ."
+        sh "docker build -t ${env.DOCKERHUB_REPO}:app-uiservice-v2.0.0 ."
 
         // Log in and push image to GitLab
         stage 'Publish'
@@ -30,52 +26,18 @@ dir ('UI') {
             ]]
         ) {
             sh "docker login -u ${env.DOCKERHUB_USERNAME} -p ${env.DOCKERHUB_PASSWORD}"
-            sh "docker push ${env.DOCKERHUB_REPO}:frauddetection-ui-v1.0.0"
+            sh "docker push ${env.DOCKERHUB_REPO}:app-uiservice-v2.0.0"
         }
-}
+    }
 
-dir ('WorkerElasticApp') { 
-        // Build Docker image
-        stage 'Build'
-        sh 'cp versions/elastic-config.json elastic-config.tmp'
-        sh 'sed -ie "s@PUBLIC_SLAVE_ELB_HOSTNAME@$PUBLICELBHOST@g; s@PUBLICNODEIP@$PUBLICNODEIP@g;"  elastic-config.tmp'
-
-        sh "docker build -t ${env.DOCKERHUB_REPO}:frauddetection-elasticingester-v1.0.0 ."
-
-        // Log in and push image to GitLab
-        stage 'Publish'
-        withCredentials(
-            [[
-                $class: 'UsernamePasswordMultiBinding',
-                credentialsId: 'dockerhub',
-                passwordVariable: 'DOCKERHUB_PASSWORD',
-                usernameVariable: 'DOCKERHUB_USERNAME'
-            ]]
-        ) {
-            sh "docker login -u ${env.DOCKERHUB_USERNAME} -p ${env.DOCKERHUB_PASSWORD}"
-            sh "docker push ${env.DOCKERHUB_REPO}:frauddetection-elasticingester-v1.0.0"
-        }
-}
-
-
-        // Deploy
-        stage 'Deploy'
-
+    // Deploy
+    stage 'Deploy'
         marathon(
             url: 'http://marathon.mesos:8080',
             forceUpdate: true,
             credentialsId: 'dcos-token',
-            filename: 'ui-config.tmp',
-            id: '/dcosappstudio-frauddetection/management/ui',
-            docker: "${env.DOCKERHUB_REPO}:frauddetection-ui-v1.0.0"
-        )
-
-        marathon(
-            url: 'http://marathon.mesos:8080',
-            forceUpdate: true,
-            credentialsId: 'dcos-token',
-            filename: 'elastic-config.tmp',
-            id: '/dcosappstudio-frauddetection/message-backend/elastic-ingester-backend',
-            docker: "${env.DOCKERHUB_REPO}:frauddetection-elasticingester-v1.0.0"
+            filename: 'uiservice.json',
+            id: '/prod/microservices/app/ui/uiservice',
+            docker: "${env.DOCKERHUB_REPO}:app-uiservice-v2.0.0"
         )
     }

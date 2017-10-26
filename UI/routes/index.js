@@ -102,8 +102,35 @@ router.get('/version.html', function(req, res, next) {
   if(appsecret==undefined) {
     appsecret="Secret undefined. Please set the APPSECRET environment variable.";
   }
-
-  res.render('version', { secret: appsecret});
+  try {
+    request.get(process.env.UISERVICE+"/version", function(err, response, body) {
+      let version= "";
+      if(err==null) {
+        version= body;
+        lastversion= version;
+      }
+      else {
+        console.log(err);
+        if(lastversion== null) {
+          version= "1.0.0";
+        }
+        else 
+          version= lastversion;
+      }
+      console.log("Version "+version);
+      console.log("body: "+body);
+      res.render('version', { secret: appsecret, version: version});    
+    });
+  }
+  catch(ex) {
+    if(lastversion== null) {
+      version= "1.0.0";
+    }
+    else
+      version= lastversion;
+    console.log("CATCH Version "+version);  
+    res.render('version', { secret: appsecret, version: version});  
+  }
 });
 
 router.get('/zeppelin.html', function(req, res, next) {

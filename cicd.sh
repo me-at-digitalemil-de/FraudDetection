@@ -46,7 +46,7 @@ cp gitlab.json.template gitlab.json
 sed -ie "s@\$PINNEDNODE@$PRIVATENODEIP@g;" gitlab.json
 
 sed  '/gitlab/d' /etc/hosts >./hosts
-echo "$PUBLICNODEIP gitlab.$APPLOWERCASE.mesosphere.io" >>./hosts
+echo "$PUBLICNODEIP gitlab.$APPLOWERCASE.mesosphere.io:10080" >>./hosts
 echo We are going to add "$PUBLICNODEIP gitlab.$APPLOWERCASE.mesosphere.io" to your /etc/hosts. Therefore we need your local password.
 sudo mv hosts /etc/hosts
 
@@ -62,7 +62,7 @@ echo
 echo I am going to open a browser window to gitlab. Please set the root user password there to \"rootroot\" and confirm it with \"rootroot\"
 echo Afterwards please logon to gitlab \(in the browser\) as user \"root\" with password \"rootroot\"
 echo When done please come back.
-open http://gitlab.$APPLOWERCASE.mesosphere.io
+open http://gitlab.$APPLOWERCASE.mesosphere.io:10080
 read -p "Press key when you set the password and are logged in as root." -n1 -s 
 echo
 echo On the bottom of the gitlab webpage is a green button \"New Project\". Please press it.
@@ -86,7 +86,7 @@ read dir
 echo Now I am going to clone the repo and install the app. This will take a couple of minutes, please come back after the browser opened a window with the running app.
 mkdir -p $dir
 cd $dir
-git clone http://root@gitlab.$APPLOWERCASE.mesosphere.io/root/$APP.git
+git clone http://root@gitlab.$APPLOWERCASE.mesosphere.io:10080/root/$APP.git
 cd $APP
 ./install-$APPLOWERCASE.sh 
 echo
