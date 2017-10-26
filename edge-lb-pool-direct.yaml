@@ -1,40 +1,70 @@
 ---
 pools:
-  - name: connected-car
+  - name: frauddetection
     count: 1
     haproxy:
       frontends:
+        - bindPort: 10080
+          protocol: HTTP
+          linkBackend:
+            defaultBackend: gitlab
+        - bindPort: 10000
+          protocol: HTTP
+          linkBackend:
+            defaultBackend: jenkins
         - bindPort: 80
           protocol: HTTP
           linkBackend:
-            defaultBackend: connected-car-ui
+            defaultBackend: frauddetection-ui
         - bindPort: 10500
           protocol: TCP
           linkBackend:
-            defaultBackend: connected-car-socket
+            defaultBackend: frauddetection-socket
         - bindPort: 10339
           protocol: HTTP
           linkBackend:
             defaultBackend: kibana
+        - bindPort: 10081
+          protocol: HTTP
+          linkBackend:
+            defaultBackend: loader
       backends:
-        - name: connected-car-ui
+        - name: gitlab
           protocol: HTTP
           servers:
             - framework:
                 value: marathon
               task:
-                value: ui.management.dcosappstudio-connectedcar
+                value: gitlab
               port:
-                name: connected-car-ui
-        - name: connected-car-socket
+                name: web
+        - name: jenkins
+          protocol: HTTP
+          servers:
+            - framework:
+                value: marathon
+              task:
+                value: jenkins
+              port:
+                name: nginx
+        - name: frauddetection-ui
+          protocol: HTTP
+          servers:
+            - framework:
+                value: marathon
+              task:
+                value: ui.management.dcosappstudio-frauddetection
+              port:
+                name: myp
+        - name: frauddetection-socket
           protocol: TCP
           servers:
             - framework:
                 value: marathon
               task:
-                value: ui.management.dcosappstudio-connectedcar
+                value: ui.management.dcosappstudio-frauddetection
               port:
-                name: connected-car-socket
+                name: socket
         - name: kibana
           protocol: HTTP
           miscStrs:
@@ -47,3 +77,12 @@ pools:
                 match: REGEX
               port:
                 name: kibana
+        - name: loader
+          protocol: HTTP
+          servers:
+            - framework:
+                value: marathon
+              task:
+                value: loader.management.dcosappstudio-frauddetection
+              port:
+                name: myp

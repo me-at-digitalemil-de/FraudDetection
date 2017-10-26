@@ -15,6 +15,8 @@ let appdef= JSON.parse(json);
 let fields= new Array(); 
 let types= new Array();
 
+let lastversion= null;
+
 for(var i= 0; i< appdef.fields.length; i++) {
   fields[i] = appdef.fields[i].name;
   types[i] = appdef.fields[i].type;
@@ -92,6 +94,10 @@ function handleImageDownload(err) {
    response.end('upload complete!');
 });
 });     
+
+router.get('/arch.html', function(req, res, next) {
+  res.render('arch', { title: 'DCOS AppStudio' });
+});
 
 router.get('/bgimage.html', function(req, res, next) {
   res.render('bgimage', { title: 'DCOS AppStudio' });

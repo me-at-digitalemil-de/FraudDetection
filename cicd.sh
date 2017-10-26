@@ -20,7 +20,7 @@ dcos package install --options=edgelb-options.json edgelb --yes
 dcos package install edgelb-pool --cli --yes
 echo "Waiting for edge-lb to come up ..."
 until dcos edgelb ping; do sleep 1; done
-dcos edgelb config edge-lb-pool-cicd-direct.yaml
+dcos edgelb config edge-lb-pool-direct.yaml
 
 echo Determing public node ip...
 export PUBLICNODEIP=$(./findpublic_ips.sh | head -1 | sed "s/.$//" )
@@ -46,14 +46,14 @@ cp gitlab.json.template gitlab.json
 sed -ie "s@\$PINNEDNODE@$PRIVATENODEIP@g;" gitlab.json
 
 sed  '/gitlab/d' /etc/hosts >./hosts
-echo "$PUBLICNODEIP gitlab.$APPLOWERCASE.mesosphere.io:10080" >>./hosts
+echo "$PUBLICNODEIP gitlab.$APPLOWERCASE.mesosphere.io" >>./hosts
 echo We are going to add "$PUBLICNODEIP gitlab.$APPLOWERCASE.mesosphere.io" to your /etc/hosts. Therefore we need your local password.
 sudo mv hosts /etc/hosts
 
 echo Installing gitlab...
 dcos marathon app add gitlab.json
 
-until $(curl --output /dev/null --silent --head --fail http://gitlab.$APPLOWERCASE.mesosphere.io); do
+until $(curl --output /dev/null --silent --head --fail http://gitlab.$APPLOWERCASE.mesosphere.io:10080); do
     printf '.'
     sleep 5
 done
