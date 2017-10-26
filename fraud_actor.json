@@ -14,7 +14,7 @@
 			"container": {
 				"type": "DOCKER",
 				"docker": {
-					"image": "jhollingerdcos/fraud_image",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-fraud_image",
 					"network": "BRIDGE",
 					"portMappings": [{
 						"containerPort": 0,

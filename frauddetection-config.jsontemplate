@@ -28,7 +28,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:frauddetection-workerelasticingester-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-workerelasticingester-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
@@ -93,7 +93,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:dcosappstudio-kafkaingester-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-kafkaingester-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
@@ -158,7 +158,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:dcosappstudio-cassandraingester-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-cassandraingester-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
@@ -230,7 +230,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:dcosappstudio-messagelistener-v2.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-messagelistener-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
@@ -294,7 +294,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:dcosappstudio-messagevalidator-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-messagevalidator-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
@@ -358,7 +358,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:dcosappstudio-messagetransformer-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-messagetransformer-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
@@ -431,7 +431,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:frauddetection-ui-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-ui-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
@@ -506,7 +506,7 @@
           "type": "MESOS",
           "volumes": [],
           "docker": {
-              "image": "mesosphere/dcosappstudio:dcosappstudio-uiservice-v1.0.0",
+              "image": "mesosphere/dcosappstudio:frauddetection-safeharbor-uiservice-v1.0.0",
               "portMappings": null,
               "privileged": false,
               "parameters": [],
@@ -574,7 +574,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "digitalemil/mypublicrepo:dcosappstudio-loader-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-loader-v1.0.0",
 					
 					"portMappings": null,
 					"privileged": false,
