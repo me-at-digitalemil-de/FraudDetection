@@ -60,6 +60,6 @@ until $(curl --output /dev/null --silent --head --fail http://$PUBLICNODEIP); do
 done
 dcos marathon app add fraud_actor.json
 ./permissions.sh frauddetection-config.jsontemplate
-open http://$PUBLICNODEIP:10001
+open http://$PUBLICNODEIP
 rm config.tmp
 rm config.tmpe

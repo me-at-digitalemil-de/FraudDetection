@@ -13,7 +13,7 @@ def gitCommit() {
         dir ('UIService') { 
         // Build Docker image
         stage 'Build'
-        sh "docker build -t ${env.DOCKERHUB_REPO}:app-uiservice-v2.0.0 ."
+        sh "docker build -t ${env.DOCKERHUB_REPO}:frauddectection-uiservice-v1.0.0 ."
 
         // Log in and push image to GitLab
         stage 'Publish'
@@ -26,7 +26,7 @@ def gitCommit() {
             ]]
         ) {
             sh "docker login -u ${env.DOCKERHUB_USERNAME} -p ${env.DOCKERHUB_PASSWORD}"
-            sh "docker push ${env.DOCKERHUB_REPO}:app-uiservice-v2.0.0"
+            sh "docker push ${env.DOCKERHUB_REPO}:frauddectection-uiservice-v1.0.0"
         }
     }
 
@@ -36,8 +36,8 @@ def gitCommit() {
             url: 'http://marathon.mesos:8080',
             forceUpdate: true,
             credentialsId: 'dcos-token',
-            filename: 'uiservice.json',
-            id: '/prod/microservices/app/ui/uiservice',
-            docker: "${env.DOCKERHUB_REPO}:app-uiservice-v2.0.0"
+            filename: 'versions/uiservice.json',
+            id: 'dcosappstudio-frauddetection/management/uiservice',
+            docker: "${env.DOCKERHUB_REPO}:frauddectection-uiservice-v1.0.0"
         )
     }
