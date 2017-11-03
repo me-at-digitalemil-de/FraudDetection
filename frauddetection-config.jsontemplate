@@ -431,7 +431,7 @@
 				"type": "MESOS",
 				"volumes": [],
 				"docker": {
-					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-ui-v1.0.0",
+					"image": "mesosphere/dcosappstudio:frauddetection-safeharbor-ui-v1.0.1",
 					
 					"portMappings": null,
 					"privileged": false,
