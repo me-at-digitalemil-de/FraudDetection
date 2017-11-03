@@ -1,3 +1,0 @@
-docker build --no-cache -t jhollingerdcos/fraud_detection_ui_v$1 .
-docker push jhollingerdcos/fraud_detection_ui_v$1
-

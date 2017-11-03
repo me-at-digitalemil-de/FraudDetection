@@ -37,7 +37,7 @@ def gitCommit() {
             forceUpdate: true,
             credentialsId: 'dcos-token',
             filename: 'versions/uiservice.json',
-            id: 'dcosappstudio-frauddetection/management/uiservice',
+            id: '/dcosappstudio-frauddetection/management/uiservice',
             docker: "${env.DOCKERHUB_REPO}:frauddetection-uiservice-v2.0.0"
         )
     }
