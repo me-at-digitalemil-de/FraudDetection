@@ -53,13 +53,5 @@
       "residency": null,
       "secrets": {},
       "taskKillGracePeriodSeconds": null,
-      "portDefinitions": [{
-          "port": 10000,
-          "protocol": "tcp",
-          "name": "myp",
-          "labels": {
-              "VIP_0": "dcosappstudio-frauddetectionuiservice:80"
-          }
-      }],
       "requirePorts": true
   }
