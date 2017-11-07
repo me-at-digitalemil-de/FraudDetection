@@ -15,6 +15,9 @@ def gitCommit() {
         stage 'Build'
         sh "docker build -t ${env.DOCKERHUB_REPO}:frauddetection-uiservice-v2.0.0 ."
 
+        stage 'Test'
+        sh "ls"
+        
         // Log in and push image to GitLab
         stage 'Publish'
         withCredentials(

@@ -15,6 +15,9 @@ def gitCommit() {
         stage 'Build'
         sh "docker build -t ${env.DOCKERHUB_REPO}:frauddectection-uiservice-v1.0.0 ."
 
+        stage 'Test'
+        sh "ls"
+        
         // Log in and push image to GitLab
         stage 'Publish'
         withCredentials(
@@ -37,7 +40,7 @@ def gitCommit() {
             forceUpdate: true,
             credentialsId: 'dcos-token',
             filename: 'versions/uiservice.json',
-            id: 'dcosappstudio-frauddetection/management/uiservice',
+            id: '/dcosappstudio-frauddetection/management/uiservice',
             docker: "${env.DOCKERHUB_REPO}:frauddectection-uiservice-v1.0.0"
         )
     }
